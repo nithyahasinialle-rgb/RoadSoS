@@ -1,203 +1,103 @@
-# ROADSoS — Emergency Response Platform
+# ROADSoS — Emergency Response Platform for Road Accidents
 
 > *"What happens when accident victims cannot call for help?"*
 
-ROADSoS is an offline-first crash detection and emergency response system for road accidents. It uses an ESP32 microcontroller to monitor real-time sensor data, detect crashes autonomously, and dispatch emergency alerts — even when the victim is unconscious and connectivity is zero.
+ROADSoS is an offline-first crash detection and emergency response system built for the **IITM Road Safety Hackathon**. It uses an ESP32 microcontroller to monitor real-time vehicle sensor data, detect crashes autonomously, and dispatch emergency alerts — even when the driver is unconscious and connectivity is zero.
 
 ---
 
-## 🚀 Quick Start (Local Development)
+## 🚀 Impact & Core Philosophy
+Every year, over 1.3 million lives are lost in road accidents globally. In India, a major bottleneck in survival rates is the **"Golden Hour"** — the first 60 minutes after a crash. 
 
+ROADSoS was designed from the ground up to solve three critical real-world challenges:
+1. **Unconscious Victims:** When a driver is incapacitated, they cannot call for help. ROADSoS detects the impact autonomously and acts on their behalf.
+2. **Network Dead Zones:** Highway accidents frequently occur in areas with poor cellular coverage. The system utilizes Bluetooth Low Energy (BLE) to broadcast local distress signals to passing vehicles and nearby devices even with zero internet.
+3. **Location Ambiguity:** Victims often struggle to describe their exact location. ROADSoS automatically transmits precise GPS telemetry to the nearest trauma center and maps the fastest route for responders.
+
+---
+
+## 📊 Survey Insights (Primary Research)
+Our design decisions are backed by a structured survey of **166 active commuters**:
+* **93.4%** experience poor mobile network coverage while traveling, proving that emergency safety nets must work offline.
+* **74.1%** have witnessed or experienced a road accident firsthand, highlighting the critical relevance of this technology.
+* **57.2%** cite delay in emergency response as the single biggest challenge during accidents.
+* **94.6%** express immediate willingness to trust and adopt an automated emergency alert system.
+
+---
+
+## 🏗️ Technical Architecture
+ROADSoS is a unified, full-stack platform:
+* **Hardware Layer:** ESP32 Dev Module monitoring real-time vehicle sensors (accelerometer, gyroscope, and structural strain).
+* **Communication Layer:** WiFi ingestion for standard API logging and BLE (Bluetooth Low Energy) advertising for offline broadcasting.
+* **Frontend Web App:** Built with Next.js 15, styled with Tailwind CSS, and featuring smooth animations using Framer Motion.
+* **Emergency Map:** Fully interactive map built with Leaflet and OpenStreetMap showing live tracking, emergency geofencing, and trauma center routing.
+* **Backend API:** Built as Next.js API routes serving dynamic telemetry states and simulator endpoints.
+
+---
+
+## ⚡ Quick Start (Local Development)
+
+### 1. Project Setup
 ```bash
-# 1. Clone / download the project
+# Clone or download the repository, then navigate inside
 cd RoadSoS
 
-# 2. Install dependencies
-npm install
+# Install dependencies (utilizing legacy peer deps for Leaflet/React 19 compatibility)
+npm install --legacy-peer-deps
 
-# 3. Copy environment variables
+# Create environment configuration
 cp .env.example .env.local
+```
 
-# 4. Start the development server
+### 2. Start the Application
+```bash
+# Start the Next.js development server
 npm run dev
 ```
-
-Open [http://localhost:3000](http://localhost:3000) in your browser.
-
----
-
-## 📁 Project Structure
-
-```
-RoadSoS/
-├── src/
-│   ├── app/
-│   │   ├── page.tsx              # Landing page
-│   │   ├── dashboard/page.tsx    # Live telemetry dashboard
-│   │   ├── map/page.tsx          # Emergency map
-│   │   ├── research/page.tsx     # Design thinking & research
-│   │   ├── api/
-│   │   │   ├── telemetry/route.ts  # GET/POST telemetry
-│   │   │   └── simulate/route.ts   # Simulation endpoint
-│   │   ├── layout.tsx
-│   │   └── globals.css
-│   ├── components/
-│   │   ├── NavBar.tsx
-│   │   ├── TelemetryCard.tsx
-│   │   ├── EmergencyBadge.tsx
-│   │   ├── WorkflowTimeline.tsx
-│   │   ├── SimulationControls.tsx
-│   │   └── MapView.tsx
-│   └── lib/
-│       ├── telemetryStore.ts     # In-memory store
-│       └── simulationEngine.ts  # Sensor simulation
-├── esp32/
-│   └── roadsos_firmware.ino     # Arduino firmware
-├── tailwind.config.js
-├── next.config.js
-└── .env.example
-```
+Open **[http://localhost:3000](http://localhost:3000)** in your browser.
 
 ---
 
-## 🌐 Pages
+## 📡 ESP32 Controller Setup
 
-| Page | URL | Description |
-|---|---|---|
-| Landing | `/` | Cinematic hero + project overview |
-| Dashboard | `/dashboard` | Live telemetry + simulation controls |
-| Map | `/map` | OpenStreetMap with emergency routing |
-| Research | `/research` | Design thinking & 165+ survey insights |
-
----
-
-## 🔌 API Endpoints
-
-### `GET /api/telemetry`
-Returns the current telemetry state.
-
-```json
-{
-  "success": true,
-  "data": {
-    "acceleration": 1.2,
-    "rollAngle": 2.4,
-    "speed": 62.0,
-    "strainValue": 4,
-    "crashProbability": 3.2,
-    "severity": "normal",
-    "emergencyActive": false,
-    "bleStatus": "idle",
-    "location": { "lat": 12.9716, "lng": 77.5946 }
-  }
-}
-```
-
-### `POST /api/telemetry`
-Ingest telemetry from ESP32 device. Body is the same shape as the GET response.
-
-### `POST /api/simulate`
-Set simulation mode without an ESP32.
-
-```json
-{ "mode": "normal" }
-// modes: "normal" | "minor" | "severe" | "sos"
-```
-
----
-
-## 📡 ESP32 Setup
-
-### Prerequisites
-- Arduino IDE 2.x or PlatformIO
-- ESP32 board package installed
-- Libraries:
-  - `ArduinoJson` by Benoit Blanchon (v6+)
-  - ESP32 BLE Arduino (included with ESP32 core)
-
-### Steps
-
-1. Open `esp32/roadsos_firmware.ino` in Arduino IDE
-2. Update the configuration at the top:
+1. Open `esp32/roadsos_firmware.ino` in the Arduino IDE.
+2. Ensure you have installed the `ArduinoJson` library.
+3. Configure your local Wi-Fi credentials and point the server URL to your computer's local IP address:
    ```cpp
    const char* WIFI_SSID     = "YOUR_WIFI_SSID";
    const char* WIFI_PASSWORD = "YOUR_WIFI_PASSWORD";
-   const char* SERVER_URL    = "http://YOUR_PC_IP:3000/api/telemetry";
+   const char* SERVER_URL    = "http://<YOUR_PC_IP>:3000/api/telemetry";
    ```
-3. Select **ESP32 Dev Module** as the board
-4. Upload firmware
-5. Open Serial Monitor at **115200 baud**
-
-> **Tip:** Find your PC's IP with `ipconfig` (Windows) or `ifconfig` (Mac/Linux). 
-> Make sure the ESP32 and your PC are on the same WiFi network.
-
-### BLE Emergency Broadcast
-When a crash is detected, the ESP32 advertises the following BLE service:
-- **Service UUID:** `12345678-1234-1234-1234-123456789abc`
-- **Characteristic:** JSON payload with `{ emergency, severity, lat, lng }`
-
-Any BLE scanner app (e.g., nRF Connect) can read this data without internet.
+4. Flash the code to your ESP32 board.
+5. Live telemetry coordinates will stream directly to the web dashboard and map in real-time.
 
 ---
 
-## ☁️ Vercel Deployment
+## ☁️ Vercel Deployment (Frontend & Backend)
 
-```bash
-# Install Vercel CLI
-npm i -g vercel
+Next.js is natively optimized for Vercel. When you deploy the application, Vercel **automatically hosts both the frontend pages and the backend API routes** (deploying the APIs as secure, auto-scaling Serverless Functions).
 
-# Login
-vercel login
+### Deploy in 3 Steps:
 
-# Deploy
-vercel --prod
-```
+1. **Push your code to GitHub** (make sure your `.gitignore` is active so you don't push `node_modules` or `.env.local` files).
+2. **Import to Vercel:** Go to [Vercel](https://vercel.com), click **Add New Project**, and import your GitHub repository.
+3. **Configure Environment Variables:** In the Vercel project settings, add:
+   * `NEXT_PUBLIC_APP_URL` = `https://your-project-name.vercel.app` (your live deployment URL).
 
-### Environment Variables on Vercel
-Set `NEXT_PUBLIC_APP_URL` to your Vercel deployment URL in the Vercel dashboard.
+Click **Deploy**, and Vercel will build and launch your full-stack platform globally!
 
-> **Note:** The in-memory telemetry store resets on each serverless invocation on Vercel. 
-> For production, replace `telemetryStore.ts` with a Redis or Upstash connection.
+> 💡 **Production Note:** The serverless backend environment uses an in-memory store for demo telemetry data, which resets during cold starts. For a production launch, update `src/lib/telemetryStore.ts` to connect to a Redis instance (like Upstash) for persistent state.
 
 ---
 
-## 🧪 Testing the Demo
-
-1. Open the dashboard at `/dashboard`
-2. Click **"Normal Ride"** — watch telemetry values update
-3. Click **"Minor Accident"** — watch severity badge change to amber
-4. Click **"Severe Crash"** — observe critical emergency state, red emergency banner
-5. Click **"Trigger SOS"** — full emergency mode, BLE broadcasting, routing line on map
-
----
-
-## 🏗️ Tech Stack
-
-| Layer | Technology |
-|---|---|
-| Framework | Next.js 15 (App Router) |
-| Styling | Tailwind CSS v3 |
-| Animations | Framer Motion |
-| Map | Leaflet + OpenStreetMap |
-| Icons | Lucide React |
-| Backend | Next.js API Routes |
-| Deployment | Vercel |
-| Firmware | ESP32 (Arduino) |
-
----
-
-## 📊 Research
-
-This project is backed by a survey of **165+ respondents** covering:
-- Poor connectivity fears (68%)
-- Unconscious victim scenarios (74%)
-- Response time as #1 survival factor (81%)
-- Women's highway safety concerns (61%)
-
-See `/research` for the full design thinking documentation.
+## 🧪 Testing the Live Demo
+If you don't have an ESP32 hardware device on hand, you can fully test the emergency pipeline using our built-in simulator:
+1. Open the **Dashboard** at `/dashboard`.
+2. Scroll to **Simulation Controls** at the bottom.
+3. Select **"Severe Crash"** or **"Trigger SOS"** — witness the telemetry cards spike, the flashing emergency banner activate, and the BLE status transition to broadcasting.
+4. Navigate to the **Map** page at `/map` to see the live accident coordinate, the pulsing coverage circle, and the routing path to the nearest emergency room.
 
 ---
 
 ## 📄 License
-
 MIT — Built for IITM Road Safety Hackathon.
