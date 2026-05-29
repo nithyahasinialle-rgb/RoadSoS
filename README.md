@@ -1,4 +1,4 @@
-# ROADSoS — Emergency Response & Crash Detection Platform
+# ROADSoS - Emergency Response & Crash Detection Platform
 
 > **Live Application URL:** [https://ketos-roadsos.vercel.app/](https://ketos-roadsos.vercel.app/)  
 > *Developed for the IITM Road Safety Hackathon*
@@ -6,7 +6,7 @@
 ---
 
 ## 📌 Executive Summary
-Every year, over 1.3 million lives are lost to road accidents globally. In India, the first 60 minutes after a crash—frequently termed the **"Golden Hour"** are the most critical for survival. However, response times are often severely delayed because victims are unconscious, bystanders panic, or cellular signals fail on remote highways.
+Every year, over 1.3 million lives are lost to road accidents globally. In India, the first 60 minutes after a crash-frequently termed the **"Golden Hour"** are the most critical for survival. However, response times are often severely delayed because victims are unconscious, bystanders panic, or cellular signals fail on remote highways.
 
 **ROADSoS** is an offline-first emergency platform designed to bridge this life-saving gap. By pairing an on-vehicle ESP32 microcontroller with a centralized Next.js command center, the system automatically detects crash signatures (high G-forces, vehicle roll, structural deformation) and broadcasts emergency telemetry. Even in complete network dead zones, it utilizes local Bluetooth Low Energy (BLE) signals to transmit location data, bypassing human panic and ensuring help is dispatched immediately.
 
