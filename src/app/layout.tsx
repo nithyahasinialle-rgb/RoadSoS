@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'ROADSoS — Emergency Response for Road Accidents',
+  title: 'Team Ketos ROADSoS',
   description:
     'An offline-first emergency response system for road accidents using ESP32, BLE broadcasting, and real-time telemetry. Built for speed, trust, and survival.',
   keywords: ['emergency response', 'road accident', 'ESP32', 'BLE', 'crash detection', 'IoT safety'],
